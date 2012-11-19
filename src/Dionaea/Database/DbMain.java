@@ -115,7 +115,9 @@ public class DbMain {
         } catch (SQLException ex) {
             Logger.getLogger(DbMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ResultSet rs = statMain.executeQuery("select id from honeypots where name="+Hnew.getName()+";");
+        ResultSet rs;
+        
+        rs = statMain.executeQuery("select id from honeypots where name=\""+Hnew.getName()+"\";");
         return rs.getInt("id");
           
     }
@@ -542,6 +544,17 @@ public class DbMain {
         
        
        
+   }
+   public ResultSet exec(String s)
+   {
+        
+       ResultSet rs = null;
+        try {
+            rs = statMain.executeQuery(s);
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       return rs;
    }
     private String Db_name = "logfiles11";
     private Connection connMain;

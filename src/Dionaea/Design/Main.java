@@ -8,12 +8,16 @@ import Dionaea.Data.SslConnection;
 import Dionaea.Database.DbHoneypot;
 import Dionaea.Database.DbMain;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -26,6 +30,8 @@ public final class Main extends javax.swing.JFrame {
     ArrayList<Honeypot> list;
     Honeypot hnew;
     DbMain db;
+    int size;
+    ResultSet rs ;
     
     /**
      * Creates new form Main
@@ -47,6 +53,18 @@ public final class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new javax.swing.JPanel();
+        dateFrom = new javax.swing.JComboBox();
+        dateTo = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        honeypotList = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -54,6 +72,97 @@ public final class Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Dionaea");
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Filter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
+        dateFrom.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+
+        dateTo.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+
+        jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+        jLabel4.setText("From");
+
+        honeypotList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                honeypotListActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Honeypots");
+
+        jLabel3.setText("To");
+
+        jLabel2.setText("Service");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(honeypotList, 0, 138, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateTo, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dateFrom)
+                    .addComponent(honeypotList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dateTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(jLabel2)))
+                .addGap(6, 6, 6))
+        );
+
+        jButton1.setText("Go");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.setEnabled(false);
+        jScrollPane2.setViewportView(jTable1);
 
         jMenu1.setText("File");
 
@@ -76,11 +185,26 @@ public final class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 918, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(328, 328, 328)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(514, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 628, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE))
         );
 
         pack();
@@ -155,14 +279,99 @@ public final class Main extends javax.swing.JFrame {
         }
         else
             try {
+                db.max();
             db.addHoneyd(hnew.getName().toString(), id);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+        getHoneypots();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void honeypotListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_honeypotListActionPerformed
+        // TODO add your handling code here:
+        Thread t = new Thread(new Runnable()
+    	{
+    		public void run()
+    		{
+    			updateIpList();
+                        filterTime();
+                try {
+                    wait(30000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                         
+    		}
+    	});
+        t.start();
+        
+    }//GEN-LAST:event_honeypotListActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        Timestamp from =  Timestamp.valueOf(this.dateFrom.getSelectedItem().toString());
+        Timestamp to = Timestamp.valueOf(this.dateTo.getSelectedItem().toString());
+        if(from.after(to))
+            return ;
+       String name = (String) honeypotList.getSelectedItem();
+         if(name == null)
+            return;
+         int id = 0;
+          String cmd = "";
+         for(Honeypot h :list)
+        {
+            if (h.getName().equalsIgnoreCase(name))
+                id = h.getId();
+        }
+          if(name.equalsIgnoreCase("All"))
+            {
+                cmd ="select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot"
+                        + " from connections"
+                        + " where datetime(connection_timestamp,'unixepoch') between "+"\""+from+" \" "
+                        + " and "+"\""+to +" order by datetime(connection_timestamp,'unixepoch') \"";
+             }
+          else
+          {
+              cmd ="select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot"
+                        + " from connections"
+                        + " where (datetime(connection_timestamp,'unixepoch') between "+"\""+from+" \" "
+                        + " and "+"\""+to +" \")"
+                        + " and honeypot =\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch')\"";
+          }
+       
+         
+        
+        rs = db.exec("select count(*) from ("+cmd+");");
+        //final int size = 0;
+        try {
+             
+             size = rs.getInt("count(*)");
+             //size =aInt;
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        rs = db.exec(cmd);
+        Thread t = new Thread(new Runnable()
+    	{
+    		public void run()
+    		{
+    			initTable(rs,size);
+                try {
+                    wait(30000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                         
+    		}
+    	});
+        t.start();
+        this.jButton1.enable(false);
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+       
     /**
      * @param args the command line arguments
      */
@@ -202,8 +411,9 @@ public final class Main extends javax.swing.JFrame {
         String [] header={"name","IP","Username","type"};
         
         list = new ArrayList<Honeypot>();
+        list.clear();
         list = db.getListOfHoneypot();
-        String [][] rowAndColumn = new String [list.size()][4];
+       /* String [][] rowAndColumn = new String [list.size()][4];
         for (int i =0 ;i<list.size();i++)
         {
             rowAndColumn[i][0] = list.get(i).getName();
@@ -216,13 +426,149 @@ public final class Main extends javax.swing.JFrame {
        // JTable table = new JTable(rowAndColumn,header);
         // this.jTable1.setModel(model);
          model.setDataVector(rowAndColumn, header);
-       //  model.addRow(rowAndColumn[2]);
+       //  model.addRow(rowAndColumn[2]);*/
+         //honeypotList.removeAll();
+         honeypotList.removeAllItems();
+         honeypotList.addItem("All");
+         for (int i =0 ;i<list.size();i++)
+        {
+            honeypotList.addItem(list.get(i).getName().toString());
+        }
+    }
+    public void filterTime()
+    {
+        String name = (String) honeypotList.getSelectedItem();
+         if(name == null)
+            return;
+         int id = 0;
+        String cmd="";
+        for(Honeypot h :list)
+        {
+            if (h.getName().equalsIgnoreCase(name))
+                id = h.getId();
+        }
+        if(!name.equalsIgnoreCase("All"))
+       {
+         cmd = "select DISTINCT datetime(connection_timestamp,'unixepoch') from connections where honeypot=\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch') \";";
+       }
+       else
+          cmd = "select DISTINCT datetime(connection_timestamp,'unixepoch') from connections order by datetime(connection_timestamp,'unixepoch');";
+        ResultSet rs ;
+       
+        rs = db.exec(cmd);
+        try {
+            
+            dateFrom.removeAllItems();
+            dateTo.removeAllItems();
+           // dateFrom.setModel(sampleModel);
+          //  dateTo.setModel(sampleModel);
+            
+            while (rs.next())
+                  {
+                           //date = Long.parseLong(rs.getString("datetime(connection_timestamp,'unixepoch')"));
+                         dateFrom.addItem(rs.getString("datetime(connection_timestamp,'unixepoch')"));
+                         dateTo.addItem(rs.getString("datetime(connection_timestamp,'unixepoch')"));
+                     }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
+    public void updateIpList()
+    {
+        String name = (String) honeypotList.getSelectedItem();
+        
+
+        if(name == null)
+            return;
+        int id = 0;
+        String cmd="";
+        for(Honeypot h :list)
+        {
+            if (h.getName().equalsIgnoreCase(name))
+                id = h.getId();
+        }
+       
+       if(!name.equalsIgnoreCase("All"))
+       {
+         cmd = "select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch') \"";
+       }
+       else
+          cmd = "select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections order by datetime(connection_timestamp,'unixepoch')";
+
+        ResultSet rs ,size ;
+        
+        
+        int sizer=0;
+        try {
+            size = db.exec("select count(*) from ("+cmd+");");
+            sizer = size.getInt("count(*)");
+            size.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        rs = db.exec(cmd);
+        initTable(rs,sizer);
+       
+    }
+    public void initTable(ResultSet rs , int size)
+    {
+        String [][] rowAndColumn = rowAndColumn = new String [size][4];;
+         String [] header={"Time","IP","Protocol","honeypot"};
+        int i =0;
+        try {
+            while(rs.next())
+            {
+                try {
+                    
+                    rowAndColumn[i][0] = rs.getString("datetime(connection_timestamp,'unixepoch')");
+                    rowAndColumn[i][1] = rs.getString("remote_host");
+                    rowAndColumn[i][2] = rs.getString("connection_protocol");
+                    int honey = rs.getInt("honeypot");
+                    for(Honeypot h :list)
+                    {
+                        if(honey == h.getId())
+                            rowAndColumn[i][3] = h.getName();
+                    }
+                    //rowAndColumn[i][3] = list.get(i).getType();
+                   i++;
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        } catch (SQLException ex) {            
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        DefaultTableModel model = new DefaultTableModel();
+        //Arrays.sort(rowAndColumn[0]);
+        model.setDataVector(rowAndColumn, header);
+        this.jTable1.setModel(model);
+        this.jButton1.enable(true);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox dateFrom;
+    private javax.swing.JComboBox dateTo;
+    private javax.swing.JComboBox honeypotList;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
