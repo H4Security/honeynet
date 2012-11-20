@@ -207,6 +207,23 @@ public class DbMain {
         prep.executeBatch();
         connMain.setAutoCommit(true);
     }
+      public void  addOffers(ResultSet re) throws SQLException
+    {
+        PreparedStatement prep = connMain.prepareStatement("insert into Downloads(connection,download_url) values (?,?)");
+        while(re.next())
+            {
+                   // prep.setString(1,re.getString("Download"));
+                    int i = re.getInt("connection")+maxConnection;
+                    prep.setInt(1, i);
+                    prep.setString(2,re.getString("offer_url"));
+                   // prep.setString(3,re.getString("download_md5_hash"));
+                    prep.addBatch();
+                    
+            }
+        connMain.setAutoCommit(false);
+        prep.executeBatch();
+        connMain.setAutoCommit(true);
+    }
       public void  addEmuProfile(ResultSet re ) throws SQLException
     {
         PreparedStatement prep = connMain.prepareStatement("insert into emu_profiles values (?,?)");

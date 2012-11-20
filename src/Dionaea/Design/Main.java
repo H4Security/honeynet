@@ -254,6 +254,7 @@ public final class Main extends javax.swing.JFrame {
             db.addDcerpcbinds(dh.resultOfConnDcerpcbinds());
             db.addDcerpcrequests(dh.dcerpcrequests());
             db.addDownloads(dh.downloads());
+            db.addOffers(dh.offers());
             db.addMysqlCommands(dh.mysqlCommands());
             db.addMysqlCommandArgs(dh.mysqlCommandsArgs());
             db.addP0fs(dh.p0fs());
@@ -263,7 +264,7 @@ public final class Main extends javax.swing.JFrame {
             db.addSipSdpMedia(dh.sip_sdp_medias());
             db.addSipSdpOrigins(dh.sip_sdp_origins());
             db.addSipVias(dh.sip_vias());
-            db.max();
+           // db.max();
             
         } catch (SQLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -308,11 +309,7 @@ public final class Main extends javax.swing.JFrame {
     		{
     			updateIpList();
                         filterTime();
-                try {
-                    wait(30000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
                          
     		}
     	});
@@ -508,10 +505,10 @@ public final class Main extends javax.swing.JFrame {
        
        if(!name.equalsIgnoreCase("All"))
        {
-         cmd = "select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch') \"";
+         cmd = "select remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+" GROUP BY  remote_host order by datetime(connection_timestamp,'unixepoch') \"";
        }
        else
-          cmd = "select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections order by datetime(connection_timestamp,'unixepoch')";
+          cmd = "select  remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections  GROUP BY  remote_host order by connection_timestamp";
 
         ResultSet rs ,size ;
         

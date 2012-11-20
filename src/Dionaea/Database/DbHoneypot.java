@@ -82,6 +82,17 @@ public class DbHoneypot {
         }
         return null;
     }
+    public ResultSet offers ()
+    {
+        try {
+            ResultSet re = stat.executeQuery("select connection ,offer_url  from offers where connection not in (select connection from downloads);");
+            return re;
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(DbMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
      public ResultSet emuProfile ()
     {
         try {
