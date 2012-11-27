@@ -72,6 +72,7 @@ public final class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -182,6 +183,14 @@ public final class Main extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem1);
 
+        jMenuItem2.setText("Del honeypot");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
@@ -208,7 +217,7 @@ public final class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -426,6 +435,18 @@ public final class Main extends javax.swing.JFrame {
        // this.jButton1.enable(false);
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        DelHoneypot del = new DelHoneypot(this,true);
+        int  id = del.del(list);
+        System.out.println(id);
+        if(id != -1)
+        {
+        ResultSet tt= db.exec("Delete from honeypots where id = "+id);
+        getHoneypots();
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
        
     /**
      * @param args the command line arguments
@@ -558,7 +579,7 @@ public final class Main extends javax.swing.JFrame {
        else
           cmd = "select  remote_host ,local_port ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections  GROUP BY  remote_host order by connection_timestamp";
 
-        ResultSet rs ,size ;
+        ResultSet rse ,size ;
         
         
         int sizer=0;
@@ -570,9 +591,9 @@ public final class Main extends javax.swing.JFrame {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
        
-        rs = db.exec(cmd);
+        rse = db.exec(cmd);
         //this.rs = rs;
-        initTable(rs,sizer);
+        initTable(rse,sizer);
         filterTime(cmd);
         
     }
@@ -649,6 +670,7 @@ public final class Main extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
