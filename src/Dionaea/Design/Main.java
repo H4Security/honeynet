@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 /**
  *
  * @author lap
@@ -32,6 +33,7 @@ public final class Main extends javax.swing.JFrame {
     DbMain db;
     int size;
     ResultSet rs ;
+    String [][] rowAndColumn;
     
     /**
      * Creates new form Main
@@ -308,7 +310,7 @@ public final class Main extends javax.swing.JFrame {
     		public void run()
     		{
     			updateIpList();
-                        filterTime();
+                        
                 
                          
     		}
@@ -333,12 +335,12 @@ public final class Main extends javax.swing.JFrame {
             if (h.getName().equalsIgnoreCase(name))
                 id = h.getId();
         }
-          if(name.equalsIgnoreCase("All"))
+         /* if(name.equalsIgnoreCase("All"))
             {
                 cmd ="select DISTINCT remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot"
                         + " from connections"
                         + " where datetime(connection_timestamp,'unixepoch') between "+"\""+from+" \" "
-                        + " and "+"\""+to +" order by datetime(connection_timestamp,'unixepoch') \"";
+                        + " and "+"\""+to +"  order by datetime(connection_timestamp,'unixepoch') \"";
              }
           else
           {
@@ -346,13 +348,21 @@ public final class Main extends javax.swing.JFrame {
                         + " from connections"
                         + " where (datetime(connection_timestamp,'unixepoch') between "+"\""+from+" \" "
                         + " and "+"\""+to +" \")"
-                        + " and honeypot =\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch')\"";
+                        + " and honeypot =\""+String.valueOf(id)+"\" GROUP BY  remote_host order by datetime(connection_timestamp,'unixepoch')";
           }
-       
+       */
+         if(!name.equalsIgnoreCase("All"))
+       {
+         cmd = "select remote_host,local_port ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+"\" GROUP BY  remote_host order by datetime(connection_timestamp,'unixepoch') ";
+       }
+       else
+          cmd = "select  remote_host,local_port ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections  GROUP BY  remote_host order by connection_timestamp";
+
          
         
         rs = db.exec("select count(*) from ("+cmd+");");
         //final int size = 0;
+        
         try {
              
              size = rs.getInt("count(*)");
@@ -362,21 +372,58 @@ public final class Main extends javax.swing.JFrame {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         rs = db.exec(cmd);
-        Thread t = new Thread(new Runnable()
+        String[] row = new String [5];
+        
+         String [] header={"Time","IP","local port","Protocol","honeypot"};
+        
+        
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(header);
+        this.jTable1.setModel(model);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
+         jTable1.getColumnModel().getColumn(2).setPreferredWidth(20);
+         jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
+        try {
+            while(rs.next())
+            {
+                String temp = rs.getString("datetime(connection_timestamp,'unixepoch')");
+                Timestamp time = Timestamp.valueOf(temp);
+                try {
+                    if( (time.after(from) || time.equals(from) ) && (time.before(to) || time.equals(to)) )
+                    {
+                            row[0] = temp;
+                            row[1] = rs.getString("remote_host");
+                            row[2] = rs.getString("local_port");
+                            row[3] = rs.getString("connection_protocol");
+                            int honey = rs.getInt("honeypot");
+                            for(Honeypot h :list)
+                            {
+                                if(honey == h.getId())
+                                    row[4] = h.getName();
+                            }
+                            //rowAndColumn[i][3] = list.get(i).getType();
+                           model.addRow(row);
+                    }
+                    
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        } catch (SQLException ex) {            
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        /*Thread t = new Thread(new Runnable()
     	{
     		public void run()
     		{
-    			initTable(rs,size);
-                try {
-                    wait(30000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+    			initTable(rowAndColumn);
+                
                          
     		}
     	});
-        t.start();
-        this.jButton1.enable(false);
+        t.start();*/
+       // this.jButton1.enable(false);
 
     }//GEN-LAST:event_jButton1ActionPerformed
        
@@ -443,9 +490,9 @@ public final class Main extends javax.swing.JFrame {
             honeypotList.addItem(list.get(i).getName().toString());
         }
     }
-    public void filterTime()
+    public void filterTime(String cmd)
     {
-        String name = (String) honeypotList.getSelectedItem();
+       /* String name = (String) honeypotList.getSelectedItem();
          if(name == null)
             return;
          int id = 0;
@@ -457,12 +504,13 @@ public final class Main extends javax.swing.JFrame {
         }
         if(!name.equalsIgnoreCase("All"))
        {
-         cmd = "select DISTINCT datetime(connection_timestamp,'unixepoch') from connections where honeypot=\""+String.valueOf(id)+" order by datetime(connection_timestamp,'unixepoch') \";";
+         cmd = "select DISTINCT datetime(connection_timestamp,'unixepoch') from connections where honeypot=\""+String.valueOf(id)+"\" order by datetime(connection_timestamp,'unixepoch') ;";
        }
        else
           cmd = "select DISTINCT datetime(connection_timestamp,'unixepoch') from connections order by datetime(connection_timestamp,'unixepoch');";
         ResultSet rs ;
        
+        rs = db.exec(cmd);*/
         rs = db.exec(cmd);
         try {
             
@@ -505,10 +553,10 @@ public final class Main extends javax.swing.JFrame {
        
        if(!name.equalsIgnoreCase("All"))
        {
-         cmd = "select remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+" GROUP BY  remote_host order by datetime(connection_timestamp,'unixepoch') \"";
+         cmd = "select remote_host ,local_port ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections where honeypot=\""+String.valueOf(id)+"\" GROUP BY  remote_host order by datetime(connection_timestamp,'unixepoch') ";
        }
        else
-          cmd = "select  remote_host ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections  GROUP BY  remote_host order by connection_timestamp";
+          cmd = "select  remote_host ,local_port ,datetime(connection_timestamp,'unixepoch'),connection_protocol ,honeypot from connections  GROUP BY  remote_host order by connection_timestamp";
 
         ResultSet rs ,size ;
         
@@ -523,13 +571,15 @@ public final class Main extends javax.swing.JFrame {
         }
        
         rs = db.exec(cmd);
+        //this.rs = rs;
         initTable(rs,sizer);
-       
+        filterTime(cmd);
+        
     }
     public void initTable(ResultSet rs , int size)
     {
-        String [][] rowAndColumn = rowAndColumn = new String [size][4];;
-         String [] header={"Time","IP","Protocol","honeypot"};
+        String [][] rowAndColumn = rowAndColumn = new String [size][5];
+         String [] header={"Time","IP","local port","Protocol","honeypot"};
         int i =0;
         try {
             while(rs.next())
@@ -538,12 +588,13 @@ public final class Main extends javax.swing.JFrame {
                     
                     rowAndColumn[i][0] = rs.getString("datetime(connection_timestamp,'unixepoch')");
                     rowAndColumn[i][1] = rs.getString("remote_host");
-                    rowAndColumn[i][2] = rs.getString("connection_protocol");
+                    rowAndColumn[i][2] = rs.getString("local_port");
+                    rowAndColumn[i][3] = rs.getString("connection_protocol");
                     int honey = rs.getInt("honeypot");
                     for(Honeypot h :list)
                     {
                         if(honey == h.getId())
-                            rowAndColumn[i][3] = h.getName();
+                            rowAndColumn[i][4] = h.getName();
                     }
                     //rowAndColumn[i][3] = list.get(i).getType();
                    i++;
@@ -557,8 +608,31 @@ public final class Main extends javax.swing.JFrame {
         }
         DefaultTableModel model = new DefaultTableModel();
         //Arrays.sort(rowAndColumn[0]);
+        TableColumnModel colMdl = jTable1.getColumnModel();
+        
+        
+       
         model.setDataVector(rowAndColumn, header);
+        
         this.jTable1.setModel(model);
+       // jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
+         jTable1.getColumnModel().getColumn(2).setPreferredWidth(20);
+         jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
+        this.jButton1.enable(true);
+    }
+    public void initTable(String [][] rowAndColumn)
+    {
+       // String [][] rowAndColumn = rowAndColumn = new String [size][4];;
+         String [] header={"Time","IP","Protocol","honeypot"};
+        int i =0;
+        
+        DefaultTableModel model = new DefaultTableModel();
+        //Arrays.sort(rowAndColumn[0]);
+        model.setDataVector(rowAndColumn, header);
+       // model.setColumnIdentifiers(header);
+        this.jTable1.setModel(model);
+        model.addRow(header);
         this.jButton1.enable(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
